@@ -1,1 +1,3 @@
+useDynLib(mixtureModels)
 exportPattern("^[[:alpha:]]+")
+import(methods, Rcpp)
