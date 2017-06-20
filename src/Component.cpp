@@ -17,6 +17,7 @@ Component::Component(int D_){
   alpha = 0.1;
 }
 
+
 Component::Component(int D_, arma::mat X){
   N = 0;
   D = D_;
@@ -32,14 +33,18 @@ Component::Component(int D_, arma::mat X){
   alpha = 0.1;
 
   // observations X
+  reinitialise(X);
+}
+
+void Component::reinitialise(arma::mat X){
   N = X.n_rows;
   kappa = kappa0 + N;
+  nu = nu0 + N;
   arma::vec colsums = arma::conv_to<arma::vec>::from(sum(X, 0));
   m = (kappa0 * m0 + colsums) / kappa;
   S = S0 + X.t() * X;
   L = chol(S - kappa * m * m.t());
 }
-
 
 bool Component::is_empty(){
   return (N == 0);

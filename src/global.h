@@ -9,3 +9,5 @@ double loglik_marginal_NIW_fast(int N, int D, double kappa, double nu, arma::mat
 // cholesky rank one update and downdate
 arma::mat chol_update_arma(arma::mat LL, arma::vec xx, int D);
 arma::mat chol_downdate(arma::mat LL, arma::vec xx, int D);
+
+arma::vec softmax(arma::vec logx);

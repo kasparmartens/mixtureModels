@@ -22,7 +22,12 @@ public:
   Component(int D);
   Component(int D, arma::mat X);
 
+  void reinitialise(arma::mat X);
+
   bool is_empty();
+  int get_N(){
+    return N;
+  }
   void add_sample(arma::vec x);
   void rm_sample(arma::vec x);
 
