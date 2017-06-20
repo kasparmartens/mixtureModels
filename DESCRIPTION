@@ -15,4 +15,4 @@ LinkingTo:
 Imports:
   Rcpp,
   RcppArmadillo
-Suggests: testthat
+Suggests: testthat, mvtnorm
