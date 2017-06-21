@@ -65,6 +65,14 @@ void Mixture::rm_component(int k){
   K = K - 1;
 }
 
+NumericVector Mixture::get_marginal_loglik(){
+  NumericVector res(K);
+  for(int k=0; k<K; k++){
+    res[k] = components[k]->marginal_loglik();
+  }
+  return res;
+}
+
 int Mixture::collapsed_gibbs_obs_i(int i){
   arma::vec x = arma::conv_to<arma::vec>::from(X.row(i));
   arma::vec logprobs(K + 1);
@@ -198,4 +206,29 @@ void Mixture::propose_merge(int i, int j){
     rm_component(prev2);
     rm_component(prev1);
   }
+}
+
+Rcpp::List Mixture::generate_sample(int n){
+  arma::mat out(n, D);
+  arma::vec cluster_probs(K);
+  for(int k=0; k<K; k++){
+    cluster_probs[k] = components[k]->get_N();
+  }
+  // IntegerVector seq = seq_len(K)-1;
+  arma::uvec seq = arma::linspace<arma::uvec>(0, K-1, K);
+  arma::uvec cluster_alloc = Rcpp::RcppArmadillo::sample(seq, n, true, cluster_probs);
+  for(int k=0; k<K; k++){
+    arma::uvec which_ind = find(cluster_alloc == k);
+    int n_k = which_ind.size();
+    if(n_k > 0){
+      components[k]->update_IW_pars();
+      out.rows(which_ind) = rmvnorm_arma(n_k, components[k]->get_mu(), components[k]->get_Sigma());
+    }
+  }
+  return Rcpp::List::create(Named("X") = out,
+                            Named("z") = 1 + NumericVector(cluster_alloc.begin(), cluster_alloc.end()));
+}
+
+NumericVector Mixture::get_z(){
+  return NumericVector(z.begin(), z.end()) + 1;
 }

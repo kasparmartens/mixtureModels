@@ -77,3 +77,16 @@ double Component::posterior_predictive(arma::vec x){
   arma::mat L_updated = chol_update_arma(L, sqrt((kappa + 1)/kappa) * (x - m_updated), D);
   return loglik_marginal_NIW_fast(1, D, kappa + 1, nu + 1, L_updated, kappa, nu, L);
 }
+
+void Component::update_IW_pars(){
+  Sigma = riwishart(nu, S);
+  mu = arma::conv_to<arma::vec>::from(rmvnorm_arma(1, m, 1.0/kappa * Sigma));
+}
+
+arma::mat Component::get_Sigma(){
+  return Sigma;
+}
+
+arma::vec Component::get_mu(){
+  return mu;
+}

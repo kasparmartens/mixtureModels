@@ -25,6 +25,7 @@ RCPP_MODULE(RcppComponent){
   .method("rm_sample", &Component::rm_sample)
   .method("marginal_loglik", &Component::marginal_loglik)
   .method("posterior_predictive", &Component::posterior_predictive)
+  .method("update_IW_pars", &Component::update_IW_pars)
   ;
 }
 
@@ -45,5 +46,9 @@ RCPP_MODULE(RcppMixture){
   .method("rm_sample", &Mixture::rm_sample)
   .method("collapsed_gibbs", &Mixture::collapsed_gibbs)
   .method("split_merge", &Mixture::split_merge)
+  .method("get_marginal_loglik", &Mixture::get_marginal_loglik)
+  .method("update_X", &Mixture::update_X)
+  .method("generate_sample", &Mixture::generate_sample)
+  .method("get_z", &Mixture::get_z)
   ;
 }

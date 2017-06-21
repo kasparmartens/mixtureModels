@@ -11,3 +11,9 @@ arma::mat chol_update_arma(arma::mat LL, arma::vec xx, int D);
 arma::mat chol_downdate(arma::mat LL, arma::vec xx, int D);
 
 arma::vec softmax(arma::vec logx);
+
+double logdet_chol_fast(arma::mat L);
+
+// generate from distributions
+arma::mat riwishart(unsigned int df, const arma::mat& S);
+arma::mat rmvnorm_arma(int n, arma::vec mu, arma::mat sigma);

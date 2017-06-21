@@ -19,6 +19,9 @@ public:
   arma::mat S;
   double alpha;
 
+  arma::vec mu;
+  arma::mat Sigma;
+
   Component(int D);
   Component(int D, arma::mat X);
 
@@ -33,6 +36,11 @@ public:
 
   double marginal_loglik();
   double posterior_predictive(arma::vec x);
+
+
+  void update_IW_pars();
+  arma::mat get_Sigma();
+  arma::vec get_mu();
 };
 
 #endif

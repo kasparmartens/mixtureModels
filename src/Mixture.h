@@ -43,6 +43,11 @@ public:
   void split_merge();
   void propose_split(int i, int j);
   void propose_merge(int i, int j);
+
+  NumericVector get_marginal_loglik();
+  Rcpp::List generate_sample(int n);
+
+  NumericVector get_z();
 };
 
 
