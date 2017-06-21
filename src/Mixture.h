@@ -33,8 +33,16 @@ public:
   void rm_sample(int i);
   void update_X(arma::mat X);
 
+  void add_component();
+  void add_component(arma::uvec X);
+  void rm_component(int k);
+
   int collapsed_gibbs_obs_i(int i);
   void collapsed_gibbs();
+
+  void split_merge();
+  void propose_split(int i, int j);
+  void propose_merge(int i, int j);
 };
 
 

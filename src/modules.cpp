@@ -43,5 +43,6 @@ RCPP_MODULE(RcppMixture){
   .method("add_sample", &Mixture::add_sample)
   .method("rm_sample", &Mixture::rm_sample)
   .method("collapsed_gibbs", &Mixture::collapsed_gibbs)
+  .method("split_merge", &Mixture::split_merge)
   ;
 }

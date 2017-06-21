@@ -21,7 +21,7 @@ match_partitions <- function(patterns, ref_patterns){
   res
 }
 
-helper_summarise_partitions <- function(clustering){
+helper_summarise_partitions <- function(clustering, ref_patterns){
   patterns_obs <- apply(clustering, 1, paste_pattern)
   df1 <- data.frame(pattern = patterns_obs) %>%
     group_by(pattern) %>%
@@ -32,7 +32,7 @@ helper_summarise_partitions <- function(clustering){
 
 
   df_empirical <- df1 %>%
-    mutate(matched_patterns = match_partitions(df1$pattern, df_correct$pattern)) %>%
+    mutate(matched_patterns = match_partitions(df1$pattern, ref_patterns)) %>%
     group_by(matched_patterns) %>%
     summarise(count = sum(n)) %>%
     ungroup() %>%

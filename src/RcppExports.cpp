@@ -32,11 +32,13 @@ END_RCPP
 }
 
 RcppExport SEXP _rcpp_module_boot_RcppComponent();
+RcppExport SEXP _rcpp_module_boot_RcppMixture();
 
 static const R_CallMethodDef CallEntries[] = {
     {"mixtureModels_chol_update", (DL_FUNC) &mixtureModels_chol_update, 2},
     {"mixtureModels_chol_downdate", (DL_FUNC) &mixtureModels_chol_downdate, 2},
     {"_rcpp_module_boot_RcppComponent", (DL_FUNC) &_rcpp_module_boot_RcppComponent, 0},
+    {"_rcpp_module_boot_RcppMixture", (DL_FUNC) &_rcpp_module_boot_RcppMixture, 0},
     {NULL, NULL, 0}
 };
 

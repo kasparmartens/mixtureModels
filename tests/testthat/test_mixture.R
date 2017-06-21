@@ -1,4 +1,4 @@
-context("Testing DP mixture")
+context("Testing DP mixture: Gibbs sampler and split-merge moves")
 
 source("relabelling_helper.R")
 
@@ -32,13 +32,8 @@ df_correct <- data.frame(pattern = pattern, prob = probs) %>%
   mutate(pattern = as.character(pattern)) %>%
   arrange(desc(prob))
 
-
-
-
-
 test_that("collapsed gibbs sampler is correct", {
   z <- 1:N
-  K <- N
   mixture <- Mixture$new(X, z)
   n_iter <- 10000
   clustering <- matrix(0L, n_iter, N)
@@ -48,24 +43,23 @@ test_that("collapsed gibbs sampler is correct", {
     }
     clustering[i, ] <- as.numeric(mixture$z) + 1
   }
-  df_empirical <- helper_summarise_partitions(clustering)
+  df_empirical <- helper_summarise_partitions(clustering, ref_patterns = df_correct$pattern)
   df_both <- merge(df_correct, df_empirical)
   expect_equal(df_both$prob, df_both$freq, tolerance = 1e-2)
 })
 
-# test_that("merge split sampler is correct", {
-#   z <- 1:N
-#   K <- N
-#   mixture <- Mixture$new(K, D, X, z)
-#   n_iter <- 1000
-#   clustering <- matrix(0L, n_iter, N)
-#   for(i in 1:n_iter){
-#     for(ii in 1:3){
-#       mixture$merge_split()
-#     }
-#     clustering[i, ] <- mixture$z
-#   }
-#   df_empirical <- helper_summarise_partitions(clustering)
-#   df_both <- merge(df_correct, df_empirical)
-#   expect_equal(df_both$prob, df_both$freq, tolerance = 1e-2)
-# })
+test_that("merge split sampler is correct", {
+  z <- 1:N
+  mixture <- Mixture$new(X, z)
+  n_iter <- 10000
+  clustering <- matrix(0L, n_iter, N)
+  for(i in 1:n_iter){
+    for(ii in 1:3){
+      mixture$split_merge()
+    }
+    clustering[i, ] <- as.numeric(mixture$z) + 1
+  }
+  df_empirical <- helper_summarise_partitions(clustering, ref_patterns = df_correct$pattern)
+  df_both <- merge(df_correct, df_empirical)
+  expect_equal(df_both$prob, df_both$freq, tolerance = 1e-2)
+})
