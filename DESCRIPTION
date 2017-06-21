@@ -15,4 +15,6 @@ LinkingTo:
 Imports:
   Rcpp,
   RcppArmadillo
+Depends:
+  ggplot2
 Suggests: testthat, mvtnorm

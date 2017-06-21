@@ -39,6 +39,7 @@ RCPP_MODULE(RcppMixture){
 
   .field("K", &Mixture::K)
   .field("z", &Mixture::z)
+  .field("X", &Mixture::X)
 
   .method("add_sample", &Mixture::add_sample)
   .method("rm_sample", &Mixture::rm_sample)

@@ -1,0 +1,115 @@
+---
+title: "Clustering: Gibbs vs SAMS sampler"
+output: 
+  html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.height=3, fig.width = 8, message = FALSE, warning = FALSE)
+```
+
+Generate data
+
+```{r, fig.width = 3.5}
+library(mixtureModels)
+library(gridExtra)
+
+set.seed(1)
+N <- 50
+mu_list <- list(c(-1, -2), c(1, 1), c(3, -1))
+Sigma_list <- list(0.8*diag(2), 0.8*diag(2), 0.8*diag(2))
+data <- generate_from_2D_GMM(N, mu_list, Sigma_list)
+plot_2D_GMM(data)
+
+X <- data$X
+n_iter <- 20
+plot_freq <- 5
+```
+
+### Initialise from all points in one cluster
+
+```{r, fig.width = 3.5}
+z <- rep(1, N)
+plot_2D_GMM(list(X = X, z = z)) + 
+  ggtitle("Initialisation")
+```
+
+```{r}
+m1 <- Mixture$new(X = X, z = z)
+m2 <- Mixture$new(X = X, z = z)
+m3 <- Mixture$new(X = X, z = z)
+for(i in 1:n_iter){
+  m1$collapsed_gibbs()
+  m2$split_merge()
+  m3$collapsed_gibbs()
+  m3$split_merge()
+  if(i %% plot_freq == 0){
+    p1 <- plot_2D_GMM(m1) + 
+      ggtitle(sprintf("Gibbs. Iter %s", i))
+    p2 <- plot_2D_GMM(m2)+ 
+      ggtitle(sprintf("SAMS. Iter %s", i))
+    p3 <- plot_2D_GMM(m3)+ 
+      ggtitle(sprintf("SAMS + Gibbs. Iter %s", i))
+    grid.arrange(p1, p2, p3, nrow=1)
+  }
+}
+```
+
+### Initialise from a k-means with k=6
+
+```{r, fig.width = 3.5}
+K <- 6
+z <- kmeans(X, centers = K)$cluster
+plot_2D_GMM(list(X = X, z = z)) + 
+  ggtitle("Initialisation")
+```
+
+```{r}
+m1 <- Mixture$new(X = X, z = z)
+m2 <- Mixture$new(X = X, z = z)
+m3 <- Mixture$new(X = X, z = z)
+for(i in 1:n_iter){
+  m1$collapsed_gibbs()
+  m2$split_merge()
+  m3$collapsed_gibbs()
+  m3$split_merge()
+  if(i %% plot_freq == 0){
+    p1 <- plot_2D_GMM(m1) + 
+      ggtitle(sprintf("Gibbs. Iter %s", i))
+    p2 <- plot_2D_GMM(m2)+ 
+      ggtitle(sprintf("SAMS. Iter %s", i))
+    p3 <- plot_2D_GMM(m3)+ 
+      ggtitle(sprintf("SAMS + Gibbs. Iter %s", i))
+    grid.arrange(p1, p2, p3, nrow=1)
+  }
+}
+```
+
+### Initialise from all points in separate clusters
+
+```{r, fig.width = 3.5}
+z <- 1:N
+plot_2D_GMM(list(X = X, z = z)) + 
+  ggtitle("Initialisation")
+```
+
+```{r}
+m1 <- Mixture$new(X = X, z = z)
+m2 <- Mixture$new(X = X, z = z)
+m3 <- Mixture$new(X = X, z = z)
+for(i in 1:n_iter){
+  m1$collapsed_gibbs()
+  m2$split_merge()
+  m3$collapsed_gibbs()
+  m3$split_merge()
+  if(i %% plot_freq == 0){
+    p1 <- plot_2D_GMM(m1) + 
+      ggtitle(sprintf("Gibbs. Iter %s", i))
+    p2 <- plot_2D_GMM(m2)+ 
+      ggtitle(sprintf("SAMS. Iter %s", i))
+    p3 <- plot_2D_GMM(m3)+ 
+      ggtitle(sprintf("SAMS + Gibbs. Iter %s", i))
+    grid.arrange(p1, p2, p3, nrow=1)
+  }
+}
+```
