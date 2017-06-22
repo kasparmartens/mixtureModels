@@ -27,6 +27,8 @@ public:
 
   void reinitialise(arma::mat X);
 
+  arma::mat get_S();
+
   bool is_empty();
   int get_N(){
     return N;

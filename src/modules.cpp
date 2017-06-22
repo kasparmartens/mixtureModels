@@ -19,6 +19,8 @@ RCPP_MODULE(RcppComponent){
   .field("m", &Component::m)
   .field("S", &Component::S)
   .field("L", &Component::L)
+  .field("mu", &Component::mu)
+  .field("Sigma", &Component::Sigma)
 
   .method("is_empty", &Component::is_empty)
   .method("add_sample", &Component::add_sample)
@@ -26,8 +28,11 @@ RCPP_MODULE(RcppComponent){
   .method("marginal_loglik", &Component::marginal_loglik)
   .method("posterior_predictive", &Component::posterior_predictive)
   .method("update_IW_pars", &Component::update_IW_pars)
+  .method("get_S", &Component::get_S)
   ;
 }
+
+RCPP_EXPOSED_CLASS(Component)
 
 RCPP_MODULE(RcppMixture){
   using namespace Rcpp;
@@ -50,5 +55,6 @@ RCPP_MODULE(RcppMixture){
   .method("update_X", &Mixture::update_X)
   .method("generate_sample", &Mixture::generate_sample)
   .method("get_z", &Mixture::get_z)
+  .method("get_component", &Mixture::get_component)
   ;
 }

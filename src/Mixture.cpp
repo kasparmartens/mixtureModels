@@ -232,3 +232,7 @@ Rcpp::List Mixture::generate_sample(int n){
 NumericVector Mixture::get_z(){
   return NumericVector(z.begin(), z.end()) + 1;
 }
+
+Component Mixture::get_component(int k){
+  return *components[k];
+}

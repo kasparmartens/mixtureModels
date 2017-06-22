@@ -46,6 +46,11 @@ void Component::reinitialise(arma::mat X){
   L = chol(S - kappa * m * m.t());
 }
 
+
+arma::mat Component::get_S(){
+  return S - kappa * m * m.t();
+}
+
 bool Component::is_empty(){
   return (N == 0);
 }
@@ -79,7 +84,7 @@ double Component::posterior_predictive(arma::vec x){
 }
 
 void Component::update_IW_pars(){
-  Sigma = riwishart(nu, S);
+  Sigma = riwishart(nu, get_S());
   mu = arma::conv_to<arma::vec>::from(rmvnorm_arma(1, m, 1.0/kappa * Sigma));
 }
 

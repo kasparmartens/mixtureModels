@@ -46,6 +46,7 @@ public:
 
   NumericVector get_marginal_loglik();
   Rcpp::List generate_sample(int n);
+  Component get_component(int k);
 
   NumericVector get_z();
 };
