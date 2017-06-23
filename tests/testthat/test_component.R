@@ -14,6 +14,7 @@ test_that("sequential updates work correctly", {
 
   expect_equal(comp1$m, comp2$m)
   expect_equal(comp1$L, comp2$L)
+  expect_equal(comp1$get_S(), comp2$get_S())
 })
 
 test_that("cholesky downdate works as well", {
@@ -32,4 +33,5 @@ test_that("cholesky downdate works as well", {
 
   expect_equal(comp1$m, comp2$m)
   expect_equal(comp1$L, comp2$L)
+  expect_equal(comp1$L, chol(comp1$get_S()))
 })

@@ -80,8 +80,8 @@ int Mixture::collapsed_gibbs_obs_i(int i){
   z[i] = -1;
   // existing clusters [0, ..., K-1]
   for(int k = 0; k < K; k++){
-    arma::uvec temp = (z == k);
-    logprobs[k] = log(sum(temp)) + components[k]->posterior_predictive(x);
+    arma::uvec temp = find(z == k);
+    logprobs[k] = log(temp.size()) + components[k]->posterior_predictive(x);
   }
   // new cluster K
   logprobs[K] = log(alpha) + empty_component.posterior_predictive(x);
