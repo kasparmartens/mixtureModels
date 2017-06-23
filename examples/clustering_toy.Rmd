@@ -17,7 +17,7 @@ library(gridExtra)
 set.seed(1)
 N <- 50
 mu_list <- list(c(-1, -2), c(1, 1), c(3, -1))
-Sigma_list <- list(0.8*diag(2), 0.8*diag(2), 0.8*diag(2))
+Sigma_list <- list(0.4*diag(2), 0.4*diag(2), 0.4*diag(2))
 data <- generate_from_2D_GMM(N, mu_list, Sigma_list)
 plot_2D_GMM(data)
 
