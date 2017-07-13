@@ -44,11 +44,14 @@ public:
   void propose_split(int i, int j);
   void propose_merge(int i, int j);
 
+  double get_loglik(arma::rowvec x);
   NumericVector get_marginal_loglik();
   Rcpp::List generate_sample(int n);
   Component get_component(int k);
 
   NumericVector get_z();
+
+  void check_empty_clusters();
 };
 
 

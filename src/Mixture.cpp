@@ -20,6 +20,7 @@ Mixture::Mixture(arma::mat XX, arma::ivec zz) : empty_component(XX.n_cols){
 }
 
 void Mixture::update_X(arma::mat XX){
+  X = XX;
   // update the X coordinates, leave cluster assignments unchanged
   for(int k = 0; k < K; k++){
     arma::mat X_k = XX.rows(find(z == k));
@@ -82,6 +83,9 @@ int Mixture::collapsed_gibbs_obs_i(int i){
   for(int k = 0; k < K; k++){
     arma::uvec temp = find(z == k);
     logprobs[k] = log(temp.size()) + components[k]->posterior_predictive(x);
+    // Component comp(D, X.rows(temp));
+    // double diffS = accu(abs(comp.get_S() - components[k]->get_S()));
+    // printf("diffS %g \n", diffS);
   }
   // new cluster K
   logprobs[K] = log(alpha) + empty_component.posterior_predictive(x);
@@ -93,10 +97,20 @@ int Mixture::collapsed_gibbs_obs_i(int i){
   return k0;
 }
 
+void Mixture::check_empty_clusters(){
+  for(int k=0; k<K; k++){
+    if(components[k]->is_empty()){
+      printf("k = %d is empty \n", k);
+    }
+  }
+}
+
 void Mixture::collapsed_gibbs(){
   for(int i=0; i<N; i++){
     rm_sample(i);
+    check_empty_clusters();
     int k0 = collapsed_gibbs_obs_i(i);
+    check_empty_clusters();
     add_sample(i, k0);
   }
 }
@@ -225,8 +239,20 @@ Rcpp::List Mixture::generate_sample(int n){
       out.rows(which_ind) = rmvnorm_arma(n_k, components[k]->get_mu(), components[k]->get_Sigma());
     }
   }
+  // compute p(x | mu, Sigma) for each point
+  arma::vec loglik;
+  loglik.zeros(n);
+  for(int k=0; k<K; k++){
+    arma::uvec which_ind = find(cluster_alloc == k);
+    int n_k = which_ind.size();
+    if(n_k > 0){
+      double pi_k = (double) n_k / N;
+      loglik += log(pi_k) + dmvnrm_arma(out, components[k]->get_mu().t(), components[k]->get_Sigma(), true);
+    }
+  }
   return Rcpp::List::create(Named("X") = out,
-                            Named("z") = 1 + NumericVector(cluster_alloc.begin(), cluster_alloc.end()));
+                            Named("z") = 1 + IntegerVector(cluster_alloc.begin(), cluster_alloc.end()),
+                            Named("loglik") = NumericVector(loglik.begin(), loglik.end()));
 }
 
 NumericVector Mixture::get_z(){

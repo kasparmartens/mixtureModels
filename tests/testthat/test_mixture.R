@@ -8,7 +8,8 @@ alpha <- 0.1
 D <- 2
 N <- 5
 # X <- matrix(rnorm(N*D), N, D)
-X <- generate_from_2D_GMM(N, list(c(-1, -1), c(0, 2), c(3, 0)))$X
+data <- generate_from_2D_GMM(N, list(c(-1, -1), c(0, 2), c(3, 0)))
+X <- data$X
 
 partition <- setparts(N)
 log_posterior <- rep(NA, ncol(partition))
@@ -62,4 +63,15 @@ test_that("merge split sampler is correct", {
   df_empirical <- helper_summarise_partitions(clustering, ref_patterns = df_correct$pattern)
   df_both <- merge(df_correct, df_empirical)
   expect_equal(df_both$prob, df_both$freq, tolerance = 1e-2)
+})
+
+test_that("update_X is correct", {
+  newX <- X + 1.5
+  mixture1 <- Mixture$new(X, data$z)
+  mixture1$update_X(newX)
+  mixture2 <- Mixture$new(newX, data$z)
+  for(k in 1:3){
+    expect_equal(mixture1$get_component(k)$get_S(),
+                 mixture2$get_component(k)$get_S())
+  }
 })

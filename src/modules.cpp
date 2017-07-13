@@ -29,6 +29,7 @@ RCPP_MODULE(RcppComponent){
   .method("posterior_predictive", &Component::posterior_predictive)
   .method("update_IW_pars", &Component::update_IW_pars)
   .method("get_S", &Component::get_S)
+  .method("reinitialise", &Component::reinitialise)
   ;
 }
 
@@ -44,12 +45,14 @@ RCPP_MODULE(RcppMixture){
   .constructor<arma::mat, arma::ivec>("Create new Mixture")
 
   .field("K", &Mixture::K)
+  .field("N", &Mixture::N)
   .field("z", &Mixture::z)
   .field("X", &Mixture::X)
 
   .method("add_sample", &Mixture::add_sample)
   .method("rm_sample", &Mixture::rm_sample)
   .method("collapsed_gibbs", &Mixture::collapsed_gibbs)
+  .method("collapsed_gibbs_obs_i", &Mixture::collapsed_gibbs_obs_i)
   .method("split_merge", &Mixture::split_merge)
   .method("get_marginal_loglik", &Mixture::get_marginal_loglik)
   .method("update_X", &Mixture::update_X)

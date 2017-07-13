@@ -39,6 +39,15 @@ public:
   double marginal_loglik();
   double posterior_predictive(arma::vec x);
 
+  double get_kappa(){
+    return kappa;
+  }
+  double get_nu(){
+    return nu;
+  }
+  arma::mat get_L(){
+    return L;
+  }
 
   void update_IW_pars();
   arma::mat get_Sigma();

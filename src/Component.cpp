@@ -1,5 +1,6 @@
 #include "global.h"
 #include "Component.h"
+#include <cmath>
 
 Component::Component(int D_){
   N = 0;
@@ -18,33 +19,40 @@ Component::Component(int D_){
 }
 
 
-Component::Component(int D_, arma::mat X){
-  N = 0;
+Component::Component(int D_, arma::mat XX){
   D = D_;
-  kappa0 = 1.0;
-  nu0 = D+2;
-  //kappa = kappa0;
-  // nu = nu0;
-  m0.zeros(D);
-  S0.eye(D, D);
-  // S.eye(D, D);
-  L0.eye(D, D);
-  //L.eye(D, D);
-  alpha = 0.1;
 
   // observations X
-  reinitialise(X);
+  reinitialise(XX);
 }
 
 void Component::reinitialise(arma::mat X){
-  N = X.n_rows;
-  kappa = kappa0 + N;
-  nu = nu0 + N;
-  arma::vec colsums = arma::conv_to<arma::vec>::from(sum(X, 0));
-  m = (kappa0 * m0 + colsums) / kappa;
-  S = S0 + X.t() * X;
-  L = chol(S - kappa * m * m.t());
+  N = 0;
+  kappa0 = 1.0;
+  nu0 = D+2;
+  kappa = kappa0;
+  nu = nu0;
+  m0.zeros(D);
+  m.zeros(D);
+  S0.eye(D, D);
+  S.eye(D, D);
+  L0.eye(D, D);
+  L.eye(D, D);
+  alpha = 0.1;
+
+  // N = X.n_rows;
+  // kappa = kappa0 + N;
+  // nu = nu0 + N;
+  // arma::vec colsums = sum(X, 0).t();
+  // m = (kappa0 * m0 + colsums) / kappa;
+  // S = S0 + X.t() * X;
+  // L = chol(S - kappa * m * m.t());
+  int n = X.n_rows;
+  for(int i=0; i<n; i++){
+    add_sample(X.row(i).t());
+  }
 }
+
 
 
 arma::mat Component::get_S(){
@@ -82,6 +90,7 @@ double Component::posterior_predictive(arma::vec x){
   arma::mat L_updated = chol_update_arma(L, sqrt((kappa + 1)/kappa) * (x - m_updated), D);
   return loglik_marginal_NIW_fast(1, D, kappa + 1, nu + 1, L_updated, kappa, nu, L);
 }
+
 
 void Component::update_IW_pars(){
   Sigma = riwishart(nu, get_S());

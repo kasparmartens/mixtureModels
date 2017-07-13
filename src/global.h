@@ -17,3 +17,4 @@ double logdet_chol_fast(arma::mat L);
 // generate from distributions
 arma::mat riwishart(unsigned int df, const arma::mat& S);
 arma::mat rmvnorm_arma(int n, arma::vec mu, arma::mat sigma);
+arma::vec dmvnrm_arma(arma::mat x, arma::rowvec mean, arma::mat sigma, bool logd);
