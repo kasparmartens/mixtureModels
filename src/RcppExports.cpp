@@ -30,15 +30,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// calculate_log_V_n
+arma::vec calculate_log_V_n(double alpha, int N, int how_many);
+RcppExport SEXP mixtureModels_calculate_log_V_n(SEXP alphaSEXP, SEXP NSEXP, SEXP how_manySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< int >::type N(NSEXP);
+    Rcpp::traits::input_parameter< int >::type how_many(how_manySEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_log_V_n(alpha, N, how_many));
+    return rcpp_result_gen;
+END_RCPP
+}
 
-RcppExport SEXP _rcpp_module_boot_RcppComponent();
-RcppExport SEXP _rcpp_module_boot_RcppMixture();
+RcppExport SEXP _rcpp_module_boot_module_Component();
+RcppExport SEXP _rcpp_module_boot_module_Mixture();
 
 static const R_CallMethodDef CallEntries[] = {
     {"mixtureModels_chol_update", (DL_FUNC) &mixtureModels_chol_update, 2},
     {"mixtureModels_chol_downdate", (DL_FUNC) &mixtureModels_chol_downdate, 2},
-    {"_rcpp_module_boot_RcppComponent", (DL_FUNC) &_rcpp_module_boot_RcppComponent, 0},
-    {"_rcpp_module_boot_RcppMixture", (DL_FUNC) &_rcpp_module_boot_RcppMixture, 0},
+    {"mixtureModels_calculate_log_V_n", (DL_FUNC) &mixtureModels_calculate_log_V_n, 3},
+    {"_rcpp_module_boot_module_Component", (DL_FUNC) &_rcpp_module_boot_module_Component, 0},
+    {"_rcpp_module_boot_module_Mixture", (DL_FUNC) &_rcpp_module_boot_module_Mixture, 0},
     {NULL, NULL, 0}
 };
 

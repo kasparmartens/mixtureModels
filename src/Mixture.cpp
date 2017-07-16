@@ -2,7 +2,12 @@
 
 #include <RcppArmadilloExtensions/sample.h>
 
-Mixture::Mixture(arma::mat XX, arma::ivec zz) : empty_component(XX.n_cols){
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args) {
+  return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
+
+Mixture::Mixture(arma::mat XX, arma::ivec zz, bool is_DPM_, bool is_MFM_) : empty_component(XX.n_cols){
   // data matrix X
   N = XX.n_rows;
   D = XX.n_cols;
@@ -10,7 +15,13 @@ Mixture::Mixture(arma::mat XX, arma::ivec zz) : empty_component(XX.n_cols){
   // cluster allocations [0, ..., K-1]
   z = zz - 1;
   K = z.max()+1;
-  alpha = 0.1;
+  alpha = 1;
+  is_DPM = is_DPM_;
+  is_MFM = is_MFM_;
+  
+  if(is_MFM){
+    log_V_n = calculate_log_V_n(alpha, N, 100);
+  }
 
   for(int k = 0; k < K; k++){
     arma::mat X_k = X.rows(find(z == k));
@@ -47,6 +58,7 @@ void Mixture::rm_sample(int i){
   if(components[k]->is_empty()){
     rm_component(k);
   }
+  z[i] = -1;
 }
 
 void Mixture::add_component(){
@@ -77,18 +89,24 @@ NumericVector Mixture::get_marginal_loglik(){
 int Mixture::collapsed_gibbs_obs_i(int i){
   arma::vec x = arma::conv_to<arma::vec>::from(X.row(i));
   arma::vec logprobs(K + 1);
-  // int prev_z_i = z[i];
-  z[i] = -1;
   // existing clusters [0, ..., K-1]
   for(int k = 0; k < K; k++){
+    // z[i] has already been set to -1
     arma::uvec temp = find(z == k);
-    logprobs[k] = log(temp.size()) + components[k]->posterior_predictive(x);
-    // Component comp(D, X.rows(temp));
-    // double diffS = accu(abs(comp.get_S() - components[k]->get_S()));
-    // printf("diffS %g \n", diffS);
+    if(is_DPM){
+      logprobs[k] = log(temp.size()) + components[k]->posterior_predictive(x);
+    } 
+    if(is_MFM){
+      logprobs[k] = log(temp.size() + alpha) + components[k]->posterior_predictive(x);
+    }
   }
   // new cluster K
-  logprobs[K] = log(alpha) + empty_component.posterior_predictive(x);
+  if(is_DPM){
+    logprobs[K] = log(alpha) + empty_component.posterior_predictive(x);
+  }
+  if(is_MFM){
+    logprobs[K] = log(alpha) + log_V_n(K+1) - log_V_n(K) + empty_component.posterior_predictive(x);
+  }
   arma::vec probs = softmax(logprobs);
   // arma::vec probs_unchanged(probs.begin(), probs.size(), true);
 
@@ -253,6 +271,15 @@ Rcpp::List Mixture::generate_sample(int n){
   return Rcpp::List::create(Named("X") = out,
                             Named("z") = 1 + IntegerVector(cluster_alloc.begin(), cluster_alloc.end()),
                             Named("loglik") = NumericVector(loglik.begin(), loglik.end()));
+}
+
+void Mixture::update_alpha(int n_steps){
+  double sd = 0.2;
+  double a0 = 1.0;
+  double b0 = 0.1;
+  for(int i=0; i<n_steps; i++){
+    alpha = RWMH_log_scale(alpha, z, K, sd, a0, b0);
+  }
 }
 
 NumericVector Mixture::get_z(){

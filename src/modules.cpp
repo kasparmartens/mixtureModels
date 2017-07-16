@@ -2,7 +2,9 @@
 #include "Component.h"
 #include "Mixture.h"
 
-RCPP_MODULE(RcppComponent){
+RCPP_EXPOSED_CLASS(Component);
+
+RCPP_MODULE(module_Component){
   using namespace Rcpp;
 
   // exposing the class in R as "Component"
@@ -33,21 +35,22 @@ RCPP_MODULE(RcppComponent){
   ;
 }
 
-RCPP_EXPOSED_CLASS(Component)
+RCPP_EXPOSED_CLASS(Mixture);
 
-RCPP_MODULE(RcppMixture){
+RCPP_MODULE(module_Mixture){
   using namespace Rcpp;
 
   // exposing the class in R as "Component"
   class_<Mixture>("Mixture")
 
   // constructor
-  .constructor<arma::mat, arma::ivec>("Create new Mixture")
+  .constructor<arma::mat, arma::ivec, bool, bool>("Create new Mixture")
 
   .field("K", &Mixture::K)
   .field("N", &Mixture::N)
   .field("z", &Mixture::z)
   .field("X", &Mixture::X)
+  .field("alpha", &Mixture::alpha)
 
   .method("add_sample", &Mixture::add_sample)
   .method("rm_sample", &Mixture::rm_sample)
@@ -59,5 +62,7 @@ RCPP_MODULE(RcppMixture){
   .method("generate_sample", &Mixture::generate_sample)
   .method("get_z", &Mixture::get_z)
   .method("get_component", &Mixture::get_component)
+  .method("update_alpha", &Mixture::update_alpha)
   ;
 }
+

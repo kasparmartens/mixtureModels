@@ -11,3 +11,7 @@ chol_downdate <- function(LL, xx) {
     .Call('mixtureModels_chol_downdate', PACKAGE = 'mixtureModels', LL, xx)
 }
 
+calculate_log_V_n <- function(alpha, N, how_many) {
+    .Call('mixtureModels_calculate_log_V_n', PACKAGE = 'mixtureModels', alpha, N, how_many)
+}
+

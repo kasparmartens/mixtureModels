@@ -4,7 +4,6 @@
 #include "global.h"
 #include "Component.h"
 
-#include <memory>
 #include <vector>
 typedef std::vector<std::unique_ptr<Component>> container;
 
@@ -13,8 +12,12 @@ public:
   int N;
   int D;
   int K;
+  bool is_DPM;
+  bool is_MFM;
   arma::ivec z;
   arma::mat X;
+  // only for MFM
+  arma::vec log_V_n;
 
   double kappa0;
   double nu0;
@@ -27,7 +30,7 @@ public:
 
   Component empty_component;
 
-  Mixture(arma::mat X, arma::ivec z);
+  Mixture(arma::mat X, arma::ivec z, bool is_DPM, bool is_MFM);
 
   void add_sample(int i, int k);
   void rm_sample(int i);
@@ -43,6 +46,8 @@ public:
   void split_merge();
   void propose_split(int i, int j);
   void propose_merge(int i, int j);
+  
+  void update_alpha(int n_steps);
 
   double get_loglik(arma::rowvec x);
   NumericVector get_marginal_loglik();

@@ -1,6 +1,5 @@
-Rcpp::loadModule("RcppComponent", TRUE)
-Rcpp::loadModule("RcppMixture", TRUE)
-
+Rcpp::loadModule("module_Component", TRUE)
+Rcpp::loadModule("module_Mixture", TRUE)
 
 evalqOnLoad({
   setMethod("show", signature("Rcpp_Component"),

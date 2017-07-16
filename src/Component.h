@@ -2,6 +2,7 @@
 #define COMPONENT_H
 
 #include "global.h"
+#include <memory>
 
 class Component {
 public:

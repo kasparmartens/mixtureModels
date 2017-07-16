@@ -25,7 +25,7 @@ arma::mat chol_downdate(arma::mat LL, arma::vec xx, int D) {
   int n = x.size();
   for(int k=0; k<n; k++){
     double r = sqrt(L(k, k)*L(k, k) - x[k]*x[k]);
-    if(isnan(r)){
+    if(std::isnan(r)){
       printf("Error: chol downdate problem!\n");
     }
     double c = r / L(k, k);
