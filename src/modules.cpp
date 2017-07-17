@@ -2,7 +2,7 @@
 #include "Component.h"
 #include "Mixture.h"
 
-RCPP_EXPOSED_CLASS(Component);
+RCPP_EXPOSED_CLASS(Component)
 
 RCPP_MODULE(module_Component){
   using namespace Rcpp;
@@ -35,7 +35,7 @@ RCPP_MODULE(module_Component){
   ;
 }
 
-RCPP_EXPOSED_CLASS(Mixture);
+RCPP_EXPOSED_CLASS(Mixture)
 
 RCPP_MODULE(module_Mixture){
   using namespace Rcpp;

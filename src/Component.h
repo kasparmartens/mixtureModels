@@ -18,7 +18,6 @@ public:
   arma::mat L;
   arma::mat S0;
   arma::mat S;
-  double alpha;
 
   arma::vec mu;
   arma::mat Sigma;

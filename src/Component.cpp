@@ -15,7 +15,6 @@ Component::Component(int D_){
   S.eye(D, D);
   L0.eye(D, D);
   L.eye(D, D);
-  alpha = 0.1;
 }
 
 
@@ -38,7 +37,6 @@ void Component::reinitialise(arma::mat X){
   S.eye(D, D);
   L0.eye(D, D);
   L.eye(D, D);
-  alpha = 0.1;
 
   // N = X.n_rows;
   // kappa = kappa0 + N;
