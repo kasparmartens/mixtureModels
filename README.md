@@ -12,6 +12,8 @@ We have implemented two MCMC moves:
 * The collapsed Gibbs sampler
 * The Sequentially Allocated Split-Merge sampler (Dahl 2003)
 
+Our implementation exposes the C++ classes to R via Rcpp modules. All MCMC updates utilise the rank-one updates for the Cholesky decomposition. 
+
 Example usage:
 
 ```
